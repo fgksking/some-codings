@@ -1,0 +1,2 @@
+public class web {
+}
