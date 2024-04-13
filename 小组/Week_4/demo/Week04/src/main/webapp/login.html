@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+
+
+</head>
+<body>
+<h1>登录界面</h1>
+<a href="register.html">没有账号？去注册</a>
+
+    <input type="text" name="username">
+    <input type="text" name="password">
+    <button id="resp">Click me</button>
+
+<div>
+
+</div>
+<script>
+
+    $("#resp").click(function () {
+        var username = $("input[name='username']").val();
+        var password = $("input[name='password']").val();
+        $.ajax({
+            type:'post',
+            url:'http://localhost:8080/userServlet?method=login',
+            data:{
+                username:username,
+                password:password
+            },
+
+            async:false,
+            success:function (resp) {
+                console.log(resp);
+                var newDiv = $('<div>').text(JSON.stringify(resp));
+                $('body').append(newDiv);
+            },
+            error: function (err) {
+                alert("有错误");
+            },
+            timeout:3000
+
+        })
+    })
+
+
+
+
+
+</script>
+</body>
+</html>
