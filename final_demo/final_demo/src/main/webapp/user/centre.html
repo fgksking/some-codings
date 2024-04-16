@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h1>个人中心</h1>
+<br>
+
+<!--1. 用户可以设置、查看、修改个人信息，包括用户名、头像、手机号等信息。
+2. 用户可以查看自己的资金明细，并且分类查看账单流水。
+3. 用户可以选择查看所属企业群组，并且进行申请或者退出。-->
+
+
+<div id="centre">
+
+    <p>用户名:{{username}}</p>
+    <p>:  </p>
+    <p>用户名</p>
+
+
+
+</div>
+
+<script>
+    new Vue({
+        el:"#centre",
+        data(){
+            return{
+                username:'',
+                photo_rul:'',
+                email:'',
+                funds:'',
+                group_name:''
+            }
+
+        },
+        mounted() { // 初始化
+
+        },
+        methods:{
+
+
+
+        }
+    })
+
+
+</script>
+</body>
+</html>

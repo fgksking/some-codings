@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<a href="login.html">返回登录</a>
+<div id="forget">
+        <table>
+            <tr>
+                <td>用户名</td>
+                <td>
+                    <input name="username" type="text"  v-model="username">
+                </td>
+            </tr>
+            <tr>
+                <td>邮箱</td>
+                <td>
+                    <input name="email" type="text"  v-model="email">
+                </td>
+            </tr>
+            <tr>
+                <td>新密码</td>
+                <td>
+                    <input name="newpwd" type="password"  v-model="newpwd">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <button @click="sendCode">获取邮箱验证码</button> </td>
+              <td>  <input name="emailCode" type="text" v-model="emailcode">
+              </td>
+            </tr>
+
+        </table>
+
+        <input type="submit" @click="send" value="提交">
+</div>
+<script>
+    new Vue({
+        el:'#forget',
+        data:{
+            emailcode:'',
+            username:'',
+            newpwd:'',
+            email:''
+        },
+        methods:{
+            sendCode() {
+
+                   //用正则表达式验证邮箱格式
+
+                axios({
+                    url:'http://localhost:8080/userServlet?method=forgetpwd',
+                    method: 'post',
+                    data:{
+                        username: this.username,
+                        email: this.email,
+                    },
+                    responseType:'json'
+
+                })
+                    .then(resp=>{
+
+                        alert(resp.data.msg);
+                    })
+                    .catch(error=>{
+                        alert("验证码发送错误");
+                    })
+
+
+
+            },
+            send(){
+                if (this.newpwd !== undefined && this.newpwd.length > 0) {
+
+                    axios({
+                        url:"http://localhost:8080/userServlet?method=changePassword",
+                        method:'post',
+                        data:{
+                            newpwd: this.newpwd,
+                            emailcode: this.emailcode
+                        },
+                        timeout:1000,
+                        responseType:'json'
+                    })
+                        .then(resp=>{
+                            alert(resp.data.msg);
+                            //跳转登录页面
+                            location.href="login.html";
+                        })
+                }else{
+                    alert("新密码不能为空");
+                }
+
+            }
+        }
+
+
+    })
+
+
+</script>
+</body>
+</html>
