@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.net/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<a href="com.html">返回</a>
+<div id="newCom">
+    <table>
+        <tr>
+            <th><p>企业名</p><input v-model="comName"></th>
+            <th><p>企业规模</p><input v-model="comSize"></th>
+            <th><p>企业方向</p><input v-model="comDirection"></th>
+            <th><p>是否公开:<input id="checkbox" v-model="comIspublic" type="checkbox"></p><label for="checkbox">{{ comIspublic }}</label></th>
+            <th><input type="submit" @click="apply" value="提交申请"></th>
+        </tr>
+    </table>
+</div>
+
+<script>
+
+    new Vue({
+        el:'#newCom',
+        data:{
+            comName:'',
+            comSize:'',
+            comDirection:'',
+            comIspublic:false
+        },
+        methods:{
+            apply(){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=create_Com',
+                    method:'post',
+                    data:{
+                        ComName: this.comName,
+                        ComDirection:this.comDirection,
+                        ComSize:this.comSize,
+                        ComIspublic:this.comIspublic
+                    }
+                }).then(resp=>{
+                    alert(resp.data.msg);
+                    location.href="com.html";
+                })
+                    .catch(error=>{
+                        alert("错误");
+                    })
+            }
+        }
+    })
+</script>
+
+
+</body>
+
+
+
+</html>

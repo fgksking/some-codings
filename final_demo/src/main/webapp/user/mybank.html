@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<a href="http://localhost:8080/centrebank.html">支付</a>
+<div id="bank">
+<p>我的账户余额:{{}}   公账余额{{}}</p>
+
+<p>流水账单:</p>
+    <ul>
+    <!--    <input type="button" @click="category(trades)" value="分类">-->
+        <li v-for="(trade, index) in user_trades" :key="trade.id">
+            账单:  {{trade}}
+        </li>
+    </ul>
+    <ul>
+        <!--    <input type="button" @click="category(trades)" value="分类">-->
+        <li v-for="(trade, index) in com_trades" :key="trade.id">
+            账单:  {{trade}}
+        </li>
+    </ul>
+</div>
+
+<script>
+    new Vue({
+        el:"#bank",
+        data:{
+            user_bank:'',
+            com_bank:'',
+            user_trades:[],
+            com_trades:[]
+        },
+        mounted(){
+            this.getTrade();
+        },
+        methods:{
+            getTrade(){
+                axios({
+                    url:'http://localhost:8080/userServlet?method=get_user_trade',
+                    method:'get'
+                })
+                    .then(resp=>{
+                        this.user_trades=resp.data.user;
+                        if(resp.data.com!==undefined){
+                            this.com_trades=resp.data.com;
+                        }
+                    })
+                    .catch(error=>{
+                        alert(error);
+                    })
+            },
+
+
+        }
+    })
+
+</script>
+</body>
+</html>
