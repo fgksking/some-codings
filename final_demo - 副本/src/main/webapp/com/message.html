@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <p>申请加入企业群组的用户</p>
+    <ul>
+        <li v-for="(user, index) in users" :key="user.username">
+            用户信息:  {{user}}
+            <input type="button" @click="approval(user)" value="同意" >
+            <input type="button" @click="disapproval(user)" value="不同意" >
+        </li>
+
+    </ul>
+</div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            users:[]
+        },
+        mounted(){
+            this.init();
+        },
+        methods: {
+            init() {
+                axios({
+                    url: "http://localhost:8080/comServlet?method=get_user_apply",
+                    method: 'get'
+                })
+                    .then(resp => {
+                        this.users = resp.data;
+                    })
+            },
+            approval(user) {
+                axios({
+                    url: "http://localhost:8080/comServlet?method=agree_join",
+                    method: 'post',
+                    data: {
+                        username: user.username
+                    }
+                })
+                    .then(resp => {
+                        alert(resp.data.msg);
+                    })
+            },
+            disapproval(user) {
+                axios({
+                    url: "http://localhost:8080/comServlet?method=disagree_join_user",
+                    method: 'post',
+                    data: {
+                        username: user.username
+                    }
+                }).then(resp => {
+                    alert(resp.data.msg);
+                })
+
+            }
+        }
+
+    })
+
+</script>
+</body>
+</html>

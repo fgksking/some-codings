@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.net/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="com">
+    <p>申请表:</p>
+    <ul>
+        <li v-for="(item,index) in approval":key="item.username">
+            申请人的信息:{{item}} <button  @click="approval(item)">同意</button>
+            <button @click="disapproval(item)">不同意</button>
+        </li>
+    </ul>
+</div>
+
+<!--公司拉取人和同意加入公司-->
+<script>
+    new Vue({
+        el:'com',
+        data:{
+            approval:[],
+            comName:''
+        },
+        mounted(){
+          this.init();
+        },
+        methods:{
+            //同意
+            approval(user){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=agree_join',
+                    method:'post',
+                    data: {
+                        username:user.username,
+                        ComName:user.comName
+                    }
+                })
+                    .then(resp=>{
+                        alert(resp.data);
+                      /*  user.comName.isApply=true;*/
+                        const index = this.approval.indexOf(user);
+                        if (index !== -1) {
+                            this.approval.splice(index, 1);
+                        }
+                    })
+                    .catch(error=>{
+                        alert(error);
+                    })
+            },
+            //不同意
+            disapproval(user){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=dis_join',
+                    method:'post',
+                    data:{
+                        username:user.username,
+                        ComName:user.comName
+                    }
+                })
+                    .then(resp=>{
+                        alert(resp.data);
+                        //删除这一行
+                        const index = this.approval.indexOf(user);
+                        if (index !== -1) {
+                            this.approval.splice(index, 1);
+                        }
+
+                    })
+                    .catch(error=>{
+                        alert(error);
+                    })
+            },
+            init(){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=get_user_apply',
+                    method:'get'
+                })
+                    .then(resp=>{
+                        this.approval = resp.data;
+                    })
+                    .catch(error=>{
+                        alert(error);
+                    })
+            }
+
+
+        }
+    })
+</script>
+</body>
+</html>

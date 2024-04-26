@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.net/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="invite">
+<!--<input v-model="searchCom" placeholder="搜索用户" type="text"><button @click="search">搜索</button>
+    <button @click="showPublicCom">显示所有企业</button>-->
+    <p>所有用户信息:</p>
+    <ul>
+        <!--    <input type="button" @click="category(trades)" value="分类">-->
+        <li v-for="(user, index) in users" :key="user.username">
+            用户信息:  {{user}}
+            <input type="button" @click="approval(user)" value="拉取" >
+        </li>
+
+    </ul>
+
+</div>
+
+<script>
+    new Vue({
+        el:'#invite',
+        data:{
+            users:[],
+        },
+        mounted(){
+            this.init();
+        },
+        methods:{
+            init(){
+                axios({
+                    url:'http://localhost:8080/userServlet?method=getAll_use',
+                    method:'get'
+                })
+                    .then(resp=>{
+                        this.users=resp.data
+                    })
+            },
+            approval(user){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=invitejoin',
+                    method: 'post',
+                    data:{  username:user.username}
+                })
+                    .then(resp=>{
+                        alert((resp.data));
+                    })
+                    .catch(error=>{
+                        console.log(error);
+                    })
+            }
+        }
+    })
+</script>
+</body>
+</html>

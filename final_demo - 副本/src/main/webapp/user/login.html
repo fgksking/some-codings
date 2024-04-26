@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+ <!--   <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!--    <script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/aes.min.js"></script>
+-->
+
+</head>
+<body>
+<a href="register.html">没有账号？去注册</a><br>
+<a href="forget.html">忘记密码</a>
+<div id="app">
+
+<p>账号:<input type="text" v-model="username"></p>
+<p>密码:<input type="text" v-model="password"></p>
+<button id="resp" @click="send">Click me</button>
+</div>
+<div>
+
+</div>
+<script>
+
+  new Vue({
+      el:'#app',
+      data:{
+          username:'',
+          password:''
+      },
+      methods:{
+          send(){
+              if(this.username!==undefined&&this.username.length>0&&this.password.length>0) {
+
+                  axios.post("http://localhost:8080/userServlet?method=login", {
+                      username: this.username,
+                      password: this.password
+                  })
+                      .then(resp => {
+                          if(resp.data.role==='admin') {
+                              location.href = "http://localhost:8080/admin.html"
+                          }else {
+
+                              console.log(resp.status);
+                              console.log(resp.data);
+                              if (resp.data.status === 101) {
+                                  alert(resp.data.msg);
+
+                              } else {
+                                  // alert("登陆成功");
+                                  //加入cookie
+                                  document.cookie = "username=" + encodeURIComponent(resp.data.data.username) + "; path=/";
+                                  location.href = "../com/com.html";
+                              }
+                          }
+                      })
+                      .catch(error => {
+                          alert("发送错误，请在控制台查看");
+                          console.log(error);
+
+                      })
+              }else {
+                  alert("用户名和密码不能为空");
+              }
+          }
+      }
+  })
+
+
+</script>
+</body>
+</html>

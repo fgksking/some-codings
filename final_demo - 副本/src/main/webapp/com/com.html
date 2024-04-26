@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+ <!--   <script src="https://cdn.staticfile.net/vue/2.2.2/vue.min.js"></script>-->
+    <script src="https://cdn.staticfile.net/vue/2.2.2/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h2>欢迎进入系统中心</h2>
+<div id="com">
+    <div v-if="islogin">
+    <button @click="unlog">退出登录</button>
+    <a href="http://localhost:8080/user/centre.html">个人中心</a>
+    <a href="http://localhost:8080/user/mymsg.html">我的消息</a>
+    <a href="http://localhost:8080/bank/centrebank.html">支付中心</a>
+        <a href="http://localhost:8080/com/newcom.html">创办公司</a>
+        <div v-if="is_com_admin">
+        <a href="http://localhost:8080/com/invite.html">邀请用户加入群组</a>
+        <input type="button" @click="destory" value="注销我的企业">
+        </div>
+
+    </div>
+    <div v-else ><a href="../user/login.html">登录</a></div>
+
+    <input v-model="searchCom" placeholder="搜索公司" type="text"><button @click="search">搜索</button>
+
+    <br>
+    <button @click="showPublicCom">显示所有企业</button>
+    <table id="DishTable" border="1" width="100%">
+        <h2>企业如下</h2>
+        <tr>
+            <th>公司名</th>
+            <th>企业规模</th>
+            <th>企业人数</th>
+            <th>企业方向</th>
+        </tr>
+        <tr v-for="(com,i) in Com" align="center">
+            <td>{{com.comName}}</td>
+            <td>{{com.comSize}}</td>
+            <td>{{com.comMember}}</td>
+            <td>{{com.comDirection}}</td>
+            <td><button @click="joinCom(com)">申请加入</button></td>
+        </tr>
+    </table><!--<input type="submit" @click="joinCom" v-model="selected" :value="com.comName">-->
+
+</div>
+
+    <script>
+
+    new Vue({
+        el:'#com',
+        data(){
+            return {
+                //数据展示交给后台处理
+                //从后台session会话中获取，得知是否为游客
+                searchCom: '',      //搜索的内容
+                username: '',
+                Com: [],
+       /*         selected: '',//选择想加入的公司*/
+                role: '',//如果是用户
+                islogin: false,//如果是用户即可加入公司，如果是游客的话就只能显示公司，不能加入
+                is_com_admin:false
+            }
+        },
+        mounted() { // 初始化
+            this.init();
+            this.showPublicCom();
+        },
+
+        methods:{
+            init(){        //得到用户的role
+              axios({
+                  url:'http://localhost:8080/userServlet?method=getUerInfo',
+                  method:'get'
+              })
+                  .then(resp=>{
+                      this.username = resp.data.username;
+                      this.role  = resp.data.role;
+                      if(resp.data.role==='Com_admin'){
+                          this.is_com_admin=true;
+                      }
+                      if(this.username === undefined){
+                          this.islogin = false;
+                      }else{
+                          this.islogin = true;
+                      }
+
+                  })
+                  .catch(error=>{
+                      alert("错误");
+                  })
+
+
+            },
+            joinCom(com){
+                if(this.role==='Com_admin'){
+                    alert("您是其中企业的负责人，不能加入公司");
+                }else {
+                    axios({
+                        url: 'http://localhost:8080/comServlet?method=approval_join_Com&ComName='+com.comName,
+                        method: 'get',
+
+                    }).then(resp => {
+                        alert(resp.data);
+                    })
+                }
+            },
+            unlog(){
+                //清除cookies和
+                window.location.href="http://localhost:8080/userServlet?method=unlog";
+
+
+            },
+            search(){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=search_Com&search='+this.searchCom,
+                    method: 'get'
+                })
+                    .then(resp=>{
+                        if(resp.data.data!==undefined) {
+                            this.Com = resp.data.data;
+                        }else {
+                            this.Com = undefined;
+                        }
+
+                    })
+                    .catch(error=>{
+                        alert("错误");
+                    })
+
+            },
+            showPublicCom(){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=getAllCom',
+                    method:'get'
+                })
+                    .then(resp=>{
+                        if(resp.data!==undefined) {
+                            this.Com = resp.data;
+                        }
+                    })
+                    .catch(error=>{
+                        alert("发送错误");
+                    })
+            },
+            destory(){
+                if (confirm("您确定要注销您的企业吗？")) {
+                    axios({
+                        url:'http://localhost:8080/comServlet?method=destoryCom',
+                        method:'get'
+                    }).then(resp=>{
+                        alert(resp.data.msg);
+                    })
+                        .catch(error=>{
+
+                        })
+                }else{
+
+                }
+            }
+
+        }
+
+    })
+
+</script>
+
+
+
+</body>
+</html>
