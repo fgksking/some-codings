@@ -1,0 +1,25 @@
+2024-05-05 00:32:26.453 [http-bio-8080-exec-3] INFO  controller.UserServlet - 调用了getUerInfo
+2024-05-05 00:32:26.453 [http-bio-8080-exec-2] INFO  controller.ComServlet - 调用了getAllCom
+2024-05-05 00:32:26.456 [http-bio-8080-exec-2] INFO  controller.ComServlet - 显示公司
+2024-05-05 00:32:26.475 [http-bio-8080-exec-3] INFO  Dao.UserDaoImpl.UserDaoImpl - 查不到此用户名为null 的用户
+2024-05-05 00:32:26.521 [http-bio-8080-exec-2] INFO  controller.ComServlet - [{"apply":true,"comDirection":"12355","comIspublic":true,"comMember":1,"comName":"12354","comSize":"big","is_frozen":true,"username":"hhh"},{"apply":true,"comDirection":"法律","comIspublic":true,"comMember":1,"comName":"大航海","comSize":"henda","is_frozen":false,"username":"f"},{"apply":true,"comDirection":"洗浴","comIspublic":true,"comMember":1,"comName":"飘白","comSize":"很大","is_frozen":true,"username":"f"}]
+2024-05-05 00:32:32.071 [http-bio-8080-exec-5] INFO  controller.UserServlet - 调用了login
+2024-05-05 00:32:32.071 [http-bio-8080-exec-5] INFO  controller.UserServlet - 正在登录
+2024-05-05 00:32:32.072 [http-bio-8080-exec-5] INFO  controller.UserServlet - {"username":"f","password":"11111111"}
+2024-05-05 00:32:32.079 [http-bio-8080-exec-5] INFO  Dao.UserDaoImpl.UserDaoImpl - 用户信息存在
+2024-05-05 00:32:32.081 [http-bio-8080-exec-5] INFO  Dao.UserDaoImpl.UserDaoImpl - 用户信息存在
+2024-05-05 00:32:32.081 [http-bio-8080-exec-5] INFO  controller.UserServlet - po.User@7e711727
+2024-05-05 00:32:32.133 [http-bio-8080-exec-4] INFO  controller.ComServlet - 调用了getAllCom
+2024-05-05 00:32:32.133 [http-bio-8080-exec-6] INFO  controller.UserServlet - 调用了getUerInfo
+2024-05-05 00:32:32.133 [http-bio-8080-exec-4] INFO  controller.ComServlet - 显示公司
+2024-05-05 00:32:32.137 [http-bio-8080-exec-6] INFO  Dao.UserDaoImpl.UserDaoImpl - 用户信息存在
+2024-05-05 00:32:32.139 [http-bio-8080-exec-4] INFO  controller.ComServlet - [{"apply":true,"comDirection":"12355","comIspublic":true,"comMember":1,"comName":"12354","comSize":"big","is_frozen":true,"username":"hhh"},{"apply":true,"comDirection":"法律","comIspublic":true,"comMember":1,"comName":"大航海","comSize":"henda","is_frozen":false,"username":"f"},{"apply":true,"comDirection":"洗浴","comIspublic":true,"comMember":1,"comName":"飘白","comSize":"很大","is_frozen":true,"username":"f"}]
+2024-05-05 00:32:34.426 [http-bio-8080-exec-8] INFO  controller.ComServlet - 调用了destoryCom
+2024-05-05 00:32:34.426 [http-bio-8080-exec-8] INFO  controller.ComServlet - 管理员正在注销公司
+2024-05-05 00:32:34.430 [http-bio-8080-exec-8] INFO  Dao.UserDaoImpl.UserDaoImpl - 用户信息存在
+2024-05-05 00:32:34.486 [http-bio-8080-exec-8] ERROR Dao.UserDaoImpl.ComDaoImpl - 连接为空
+2024-05-05 00:32:58.538 [http-bio-8080-exec-10] INFO  controller.UserServlet - 调用了getUerInfo
+2024-05-05 00:32:58.538 [http-bio-8080-exec-7] INFO  controller.ComServlet - 调用了getAllCom
+2024-05-05 00:32:58.539 [http-bio-8080-exec-7] INFO  controller.ComServlet - 显示公司
+2024-05-05 00:32:58.544 [http-bio-8080-exec-10] INFO  Dao.UserDaoImpl.UserDaoImpl - 用户信息存在
+2024-05-05 00:32:58.548 [http-bio-8080-exec-7] INFO  controller.ComServlet - [{"apply":true,"comDirection":"12355","comIspublic":true,"comMember":1,"comName":"12354","comSize":"big","is_frozen":true,"username":"hhh"},{"apply":true,"comDirection":"洗浴","comIspublic":true,"comMember":1,"comName":"飘白","comSize":"很大","is_frozen":true,"username":"f"}]

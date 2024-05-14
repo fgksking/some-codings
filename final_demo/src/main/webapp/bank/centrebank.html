@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.net/vue/2.2.2/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0-rc.1/jsencrypt.min.js"></script>
+
+    <!--    <script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/aes.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0-rc.1/jsencrypt.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/enc-base64.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/md5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/evpkdf.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/cipher-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/aes.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/pad-pkcs7.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/mode-ecb.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/enc-utf8.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/enc-hex.min.js"></script>-->
+
+</head>
+<body>
+<h1>充值、支付中心</h1>
+<a href="http://localhost:8080/user/mybank.html">我的资金账户</a>
+<div id="mycom">
+<template>
+    <p>接收人的名字:<input v-model="receiver" type="text"></p>
+    <p>选择资金账户: <input type="radio" id="我的账户" value="User" v-model="bank">
+    <label for="我的账户">我的账户</label>
+        <input type="radio" id="公司账户" value="Com" v-model="bank">
+        <label for="公司账户">公司账户</label>
+    </p>
+    <p>输入您的密码:<input v-model="Password" type="password"></p>
+    <p>输入您的转账的金额大小:<input v-model="amount" type="text"></p>
+    <button @click="paying">确定</button>
+<!--    <div v-if="checkpay">
+
+        <input @click="sure" value="确定支付" type="submit">
+        <input @click="cancel" value="取消支付" type="submit">
+    </div>-->
+
+    <!--<div v-if="isjoinCom">-->
+    <p></p>
+    <p>以下是群组人员</p>
+    <!--<tr v-for="(relation,i) in relations.data" align="center">
+        <td>组员名字:{{relation.username}}</td>
+        <td v-if="isadmin"><input type="button" value="收款" @click="request(relation.username)" v-model="selected"></td>
+       <td v-if="isadmin"></td>-->
+    <!--</tr>-->
+    <!--</div>-->
+    <h2>用户信息</h2>
+    <p>角色: {{ relations.role }}</p>
+    <p>用户名: {{ relations.username }}</p>
+    <h3>数据列表</h3>
+    <ul>
+        <li v-for="(item, index) in relations.data" :key="index">
+            公司名: {{ item.comName }}, 用户名: {{ item.username }}  <td v-if="isadmin">
+            <input type="button" value="回收资金" @click="request(item)">
+            <input type="button" value="分配资金" @click="pay(item)">
+ <!--           <input type="button" value="收款" @click="showForm = true">
+            <form-component :showForm="showForm" :formData="formData" @closeForm="showForm = false"></form-component>-->
+
+
+        </td>
+        </li>
+    </ul>
+</template>
+</div>
+
+
+<script>
+
+
+    new Vue({
+        el:'#mycom',
+        data(){
+            return {
+                ComName: '',
+                name: '',
+                role: '',
+                isadmin: false,
+                //公司旗下所有人的名字
+                relations: [],
+                isjoinCom: false,
+                payed: '',
+                showForm: false,
+                Password: '',          //密码
+                receiver: '',          //支付对象的名字
+                amount: '', //金额大小
+                bank: '',   //账户主体 User or Com
+                checkpay: false,
+                AesKey: null,
+                RsaKey: '',
+                EncryData: '',
+                EncryKey: '',
+                IV: null
+            }
+
+
+
+        },
+            mounted(){
+            this.init();
+            this.generateAesKey();
+        },
+        methods:{
+            init(){
+                axios({
+                    url:'http://localhost:8080/comServlet?method=loginCom',
+                    method:'get'
+
+                }).then(resp=>{
+                    if(resp.data.data===undefined){
+                        alert("你还未加入公司,功能受限");
+                    }else{
+                        this.name = resp.data.username;
+                        this.isjoinCom=true;
+                        this.relations = resp.data;
+                        this.role = resp.data.role;
+                        if(this.role==='Com_admin'){
+                        this.isadmin=true;
+                      }
+                    }
+                })
+                    .catch(errpr=>{
+                        alert(errpr);
+                    })
+            },
+            request(username){
+                if(username.role==='Com_admin'){
+                    alert("权限不足");
+                }
+                else if(this.role==='Com_admin') {
+                    window.location.href = '/bank/com_fund.html?username=' + username + '&type=request';
+                }else {
+                    alert("权限不足");
+                }
+            },
+
+            pay(username) {
+                //分配资金到个人
+                //创建权限表
+                if(username.role==='Com_admin'){
+                    alert("权限不足");
+                }
+                else if(this.role==='Com_admin') {
+                    window.location.href = '/bank/com_fund.html?username=' + username + '&type=apy';
+                }else {
+                    alert("权限不足");
+                }
+            },
+
+            paying(){
+                //发送给后台
+                //进行资金冻结流程
+                //校验等操作
+                if(this.receiver===undefined||this.Password===undefined||this.bank===undefined||this.amount===undefined){
+                    alert("请输入完整的信息");
+                }else {
+                    const regex = /^(([1-9]\d*)|\d)(\.\d{1,2})?$/;
+                    if (regex.test(this.amount)) {
+                        const dataToEncrypt = {
+                            username: this.name,
+                            receiver: this.receiver,
+                            bank: this.bank,
+                            password: this.Password,
+                            amount: this.amount
+                        };
+                        const encryptedData =this.aesEncrypt(dataToEncrypt);
+                        const  encryptedAES =this.rsaEncryptAesKey(this.AesKey, this.RsaKey);
+                        const iv = this.IV;
+                        axios({
+                            url: 'http://localhost:8080/fundServlet?method=pay',
+                            method: 'post',
+                            data: {
+                            /*    username: this.name,
+                                receiver: this.receiver,
+                                bank: this.bank, //账户
+                                password: this.Password,
+                                amount: this.amount*/
+
+                                encryptedData:encryptedData,
+                                encryptedAES:encryptedAES,
+                                iv:iv
+
+                            },
+
+                        })
+                            .then(resp => {
+                                alert(resp.data.msg);
+                                if(resp.data.code===100){
+                                    location.reload();
+                                }else if(resp.data.code===101){
+                                    location.reload();
+                                }else if (resp.data.code===102){
+
+                                }else if(resp.data.code===200){
+                                    location.reload();
+                                }
+                            })
+                            .catch(error => {
+                                alert(error);
+                            })
+                    }else{
+                        alert("请输入正确格式");
+                    }
+                }
+
+            },
+                 generateAesKey(){
+                     const key=CryptoJS.lib.WordArray.random(128/8);
+                     this.AesKey = key;
+                     /* this.AesKey = CryptoJS.enc.Base64.parse(key);*/
+                     axios({
+                         url:'http://localhost:8080/fundServlet?method=getkey',
+                         method:'get'
+                     }).then(resp=>{
+                         this.RsaKey=resp.data;
+                     })
+                 },
+                 aesEncrypt(data){
+
+                     /* const key = CryptoJS.enc.Utf8.parse(keyString);*/
+                     /*  const Key = this.aesKeyToString(key);*/
+
+                     if (!this.AesKey) {
+                         throw new Error('AES key has not been generated.');
+                     }
+                     const key = this.AesKey;
+                     const stringData = JSON.stringify(data);
+                     const iv =   CryptoJS.lib.WordArray.random(128/8);  /*CryptoJS.lib.WordArray.create(key.words.slice(0, 16));*/  //
+                     console.log(iv);
+                     /*console.log(CryptoJS.enc.Base64.stringify(iv))*/
+                     this.IV = CryptoJS.enc.Base64.stringify(iv);
+                     const encrypted = CryptoJS.AES.encrypt(stringData, this.AesKey, {
+                         iv: iv,
+                         mode: CryptoJS.mode.CBC,
+                         padding: CryptoJS.pad.Pkcs7
+                     });
+                     var encryptedText = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+                    /* return CryptoJS.enc.Base64.stringify(encrypted);*/
+                     return encryptedText;
+                 },
+                 aesKeyToString(key) {
+                     return key.toString(CryptoJS.enc.Base64);
+                 },
+
+
+    rsaEncryptAesKey(aesKeyString, publicKeyString) {
+                     const aesKeyBase64 = CryptoJS.enc.Base64.stringify(aesKeyString);
+                     const encrypt = new JSEncrypt();
+             /*        const key = this.base64ToPem(publicKeyString);*/
+                     encrypt.setPublicKey(publicKeyString);
+                 return encrypt.encrypt(aesKeyBase64);
+            }
+
+    }
+
+
+    })
+
+</script>
+
+</body>
+</html>
