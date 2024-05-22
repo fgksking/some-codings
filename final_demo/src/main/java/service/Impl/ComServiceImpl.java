@@ -328,7 +328,7 @@ public class ComServiceImpl implements ComService {
         BigDecimal bigDecimal = new BigDecimal(0);
         if(getfund!=null){
             for (permission permission : getfund) {
-                bigDecimal.add(permission.getPer_amount());
+                bigDecimal = bigDecimal.add(permission.getPer_amount());
             }
         }
         return bigDecimal;

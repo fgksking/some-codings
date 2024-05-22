@@ -158,9 +158,9 @@ public class ComServlet extends BaseServlet{
         Company com = comService.findCom(comName);
         String admin = com.getUsername();
         //并实时给管理员发送消息
-        boolean b1 = comService.sendMsg(username, admin, "退出群组");
+ //       boolean b1 = comService.sendMsg(username, admin, "退出群组");
         //并退出公司删除relation
-        if(b&&b1){
+        if(b){
             response.getWriter().write("退出成功");
         }else{
             response.getWriter().write("退出失败");
@@ -289,12 +289,17 @@ public class ComServlet extends BaseServlet{
         int i =0;
         if(user!=null) {
             map.put("role",user.getRole());
+            List<Com_relation> relation2 = comService.get_relation(username);
+            String comName1 = relation2.get(0).getComName();
             List<Company> comName = comService.getComName(username);
             List<Com_relation> relation = new ArrayList<>();
-            if(comName!=null) {
+            if(comName1!=null) {
                 logger.info("公司关系拿到");
                 for (Company s : comName) {
-                    List<Com_relation> relation1 = comService.getRelation(s.getComName());
+                    List<Com_relation> relation1 = comService.getRelation(comName1);
+                    if(relation1==null){
+                        return;
+                    }
                     for (Com_relation comRelation : relation1) {
                         relation.add(comRelation);
                     }
@@ -390,7 +395,9 @@ public class ComServlet extends BaseServlet{
         String ComName = comName.get(0).getComName();
         logger.info("COmName"+comName);
         List<JoinComMsg> joinUser = comService.get_join_user(ComName);
-        response.getWriter().write(JSON.toJSONString(joinUser));
+        String s  =JSON.toJSONString(joinUser);
+      //  response.getWriter().write(/*JSON.toJSONString(ServerResponse.createSuccess(s))*/));
+        response.getWriter().write(s);
     }
 
     public void invitejoin(HttpServletRequest request, HttpServletResponse response)throws IOException{

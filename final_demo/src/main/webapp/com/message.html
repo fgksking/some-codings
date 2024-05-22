@@ -35,9 +35,9 @@
                     method: 'get'
                 })
                     .then(resp => {
-                        if(resp.data.code===200) {
+                       /* if(resp.data.code===200) {*/
                             this.users = resp.data;
-                        }
+                  /*      }*/
                     })
             },
             approval(user) {

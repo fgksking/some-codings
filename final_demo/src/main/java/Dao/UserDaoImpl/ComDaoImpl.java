@@ -238,7 +238,7 @@ public class ComDaoImpl implements ComDao {
 
     @Override
     public boolean log_trade(Connection con,String username,String type, String target, BigDecimal amount, String bank,String ComName) {
-        String mysql ="insert into trade(username,traget,trade_amount,bank,trade_time,ComName) values(?,?,?,?,?)";
+        String mysql ="insert into trade(username,traget,trade_amount,bank,trade_time,ComName) values(?,?,?,?,?,?)";
         int i = CRUD_Utils.executeUpdate(mysql, con,username, target, amount, bank, System.currentTimeMillis(),ComName);
         return i==1;
     }
